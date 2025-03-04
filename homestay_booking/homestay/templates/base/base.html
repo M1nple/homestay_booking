@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.js"></script>
+
+    
+    <title> {% block title %} page title {% endblock %}</title>
+</head>
+<body>
+    {% include 'base/navbar.html' %}
+    <br>
+    
+    {% if messages %}
+      {% for message in messages %}
+          <div class="p-2 mb-2 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <center>{{ message }}</center>
+          </div>
+      {% endfor %}
+    {% endif %}
+      
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
+
