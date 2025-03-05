@@ -32,16 +32,17 @@ class XaPhuong(models.Model):
 
 
 class Homestay(models.Model):
-    owner = models.IntegerField(blank= False, default= 1)
+    # owner = models.IntegerField(blank= False, default= 1)
+    owner = models.ForeignKey(User, on_delete= models.CASCADE, blank= False, default= 1)
     homestay_name = models.CharField(max_length=255)
-    homestay_address = models.TextField()
+    homestay_address = models.CharField(max_length=500)
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
     total_rooms = models.IntegerField(default=1)
-    decription = models.CharField(max_length=1000)
+    decription = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return self.homestay_name
 
 class HomestayImage(models.Model):
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE, related_name="images")

@@ -34,6 +34,7 @@ def login_user(request):
         user = authenticate(request, username = username, password = password)  # Xác thực user
         if user is not None: # nếu tồn tại
             login(request, user) # cho đăng nhập
+            messages.success(request,('đăng nhập thành công'))
             return redirect('home')
         else:
             messages.success(request, ('Sai tài khoản, mật khẩu hoặc tài khoản không tồn tại'))

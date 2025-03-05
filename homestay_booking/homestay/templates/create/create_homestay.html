@@ -1,0 +1,42 @@
+{% extends "base/base.html" %}
+{% block title %} CREATE {% endblock %}
+
+{% block content %} 
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 ">
+        <div class="w-full max-w-4xl p-8 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700" >
+            <p class = 'text-center text-gray-900 text-5xl dark:text-white font-bold font-mono pb-5'> CREATE HOMESTAY</p>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <div>
+                        <label for="homestay_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tên homestay</label>
+                        {{form.homestay_name}}
+                    </div>
+                </div>
+                <div class="grid gap-6 mb-6 md:grid-cols-2">
+                    <div>
+                        <label for="price_per_night" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Số lượng phòng</label>
+                        {{form.total_rooms}}
+                    </div>
+                    <div>
+                        <label for="total_rooms" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">giá tiền 1 đêm</label>
+                        {{form.price_per_night}}
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <div>
+                        <label for="homestay_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">địa chỉ </label>
+                        {{form.homestay_address}}
+                    </div>
+                    <div>
+                        <label for="decription" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">mô tả</label>
+                        {{form.decription}}
+                    </div>
+                    <div>
+                        <br>
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -11,11 +11,30 @@
     {% include 'base/navbar.html' %}
     <br>
     
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          setTimeout(function () {
+              let alerts = document.querySelectorAll(".alert-message");
+              alerts.forEach(alert => {
+                  alert.style.transition = "opacity 0.5s";
+                  alert.style.opacity = "0";
+                  setTimeout(() => alert.remove(), 500); // Xóa phần tử sau khi ẩn
+              });
+          }, 3000); // 3 giây
+      });
+  </script>
+
     {% if messages %}
       {% for message in messages %}
-          <div class="p-2 mb-2 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-            <center>{{ message }}</center>
+          <div class="alert-message p-2 mb-2 text-sm rounded-lg text-center 
+            {% if message.tags == 'success' %} bg-green-50 text-green-800 dark:bg-green-800 dark:text-green-400
+            {% elif message.tags == 'error' %} bg-red-50 text-red-800 dark:bg-red-800 dark:text-red-400
+            {% elif message.tags == 'warning' %} bg-yellow-50 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-400
+            {% elif message.tags == 'info' %} bg-blue-50 text-blue-800 dark:bg-blue-800 dark:text-blue-400
+            {% endif %}" role="alert">
+            {{ message }}
           </div>
+
       {% endfor %}
     {% endif %}
       

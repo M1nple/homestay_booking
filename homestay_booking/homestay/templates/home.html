@@ -2,11 +2,10 @@
 
 {% block title %} Home {% endblock %}
 {% block content %}
-
-<br>
-<br>
-<br>
     <center>
-        <h1>TEss</h1>
+        {% for homestay in homestays%}
+            chu: {{homestay.owner}} ten: {{homestay}} | dc: {{homestay.homestay_address}} | gia: {{homestay.price_per_night}}
+            <br>
+        {% endfor %}
     </center>
 {% endblock %} 
