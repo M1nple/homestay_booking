@@ -1,15 +1,18 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User  # bảng User này là bảng có sẵn trong bộ xác thực của django bao gồm cả tk supperadmin khi tạo app
 from django import forms
+from .models import UserProfile
 
 class RegisterUserForm(UserCreationForm): 
     email = forms.EmailField()
     first_name = forms.CharField(max_length = 20, widget = forms.TextInput(attrs={'class': 'form-control'})) 
     last_name = forms.CharField(max_length = 20, )
+    phoneNumber = forms.CharField(max_length= 10)
+    # avatar = forms.ImageField()
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'phoneNumber',)
 
 # các trường có sẵn thì phải gọi như này class = 'form-control' boostrap 
     # def __init__(self, *args, **kwargs):
