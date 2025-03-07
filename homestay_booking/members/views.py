@@ -62,11 +62,12 @@ def logout_user(request): # Đăng xuất user
     messages.success(request, ("logout thành công "))
     return redirect('home') 
 
-
 # profile
 @login_required(login_url='login')
-def user_profile(request):
-    return render(request, 'user_profile.html',)
+def user_profile(request): 
+    me = request.user
+    user_profile = UserProfile.objects.get( user = me)
+    return render(request, 'user_profile.html',{'user_profile' : user_profile})
 
 
 

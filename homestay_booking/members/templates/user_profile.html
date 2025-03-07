@@ -8,7 +8,7 @@
         <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
         </svg>
     </button>
-    
+
     <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
         <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
@@ -82,10 +82,10 @@
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
             <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
                 <!-- Ảnh user -->
-                <div class="w-2/8 mx-7">
-                    <a href="{% url 'home' %}">
-                        <img class="w-20 h-20 rounded-full" src="https://cdn-img.thethao247.vn/origin_842x0/storage/files/haibui/2025/02/05/chrome_asfxjehdvw-1-67a2e21aa5d6e.png">
-                    </a>
+                <div class="w-2/8 mx-1">
+                    {% if user_profile.avatar %}
+                        <img class="w-20 h-20 rounded-full" src="{{user_profile.avatar.url }}" alt="Avatar">
+                    {% endif %}
                 </div>
     
                 <!-- Thông tin user -->
@@ -109,10 +109,15 @@
             </div>
         </div>
     </div>
-    
+
+
  
 
 
-
+<footer>
+    <center>
+        <h1 class="ml-6"> test</h1>
+    </center>
+</footer>
 
 {% endblock %}
