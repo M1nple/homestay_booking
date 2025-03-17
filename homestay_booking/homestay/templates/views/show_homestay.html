@@ -1,0 +1,51 @@
+{% extends "base/base.html" %}
+{% block title %} show homestay {% endblock %}
+{% block content %} 
+
+    <div class="p-4 sm:ml-4">
+        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+            {% for homestay in homestays %}
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>Tên homestay: </b>  {{homestay.homestay_name}} </li>
+                </div>
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>Chủ sở hữu: </b> {{homestay.owner}}</li>
+                </div>
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>Địa chỉ: </b> {{homestay.homestay_address}}</li>
+                </div>
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>giá 1 đêm: </b> {{homestay.price_per_night}}</li>
+                </div>
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>Số lượng phòng: </b> {{homestay.total_rooms}}</li>
+                </div>
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>Mô tả: </b>{{homestay.decription}}</li>
+                </div>
+                <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+                    <li><b>Thời gian tạo: </b> {{homestay.created_at}}</li>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+    <br>
+    <br>    
+
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 m-8">
+        {% for img in images %}
+                <div>
+                    <img class="h-auto max-w-full rounded-lg mb-5" src="{{ img.image.url }}" alt="" width="300px" height="300px">
+                    <a class="mt-2 px-3 py-1 bg-red-500 text-white rounded-lg flex justify-center" href="{% url 'delete-image' img.id %}"> xóa ảnh </a>
+                </div>
+        {% endfor %}
+    </div>
+    
+
+    
+
+
+{% endblock %}

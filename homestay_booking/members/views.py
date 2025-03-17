@@ -51,7 +51,7 @@ def login_user(request):
             messages.success(request,('đăng nhập thành công'))
             return redirect('home')
         else:
-            messages.success(request, ('Sai tài khoản, mật khẩu hoặc tài khoản không tồn tại'))
+            messages.error(request, ('Sai tài khoản, mật khẩu hoặc tài khoản không tồn tại'))
             return redirect('login')
     else:
         return render(request, 'login.html')

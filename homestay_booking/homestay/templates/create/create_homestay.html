@@ -6,7 +6,7 @@
     <div class="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 ">
         <div class="w-full max-w-4xl p-8 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700" >
             <p class = 'text-center text-gray-900 text-5xl dark:text-white font-bold font-mono pb-5'> CREATE HOMESTAY</p>
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-6">
                     <div>
@@ -25,6 +25,44 @@
                     </div>
                 </div>
                 <div class="mb-6">
+
+                    <!-- <div>
+                        <label for="tinh_tp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tỉnh Tp</label>
+                        {{form.tinh}}
+                    </div>
+                    <div>
+                        <label for="quan_huyen" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quân Huyện </label>
+                        {{form.quan}}
+                    </div>
+                    <div>
+                        <label for="xa_phuong" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Xã Phường </label>
+                        {{form.xa}}
+                    </div> -->
+
+                    <div class="grid gap-2 mb-6 md:grid-cols-3" >
+                        <div class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <label for="tinh" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tỉnh Tp</label>
+                            <select class="w-full" id="tinh" name = "tinh_tp">
+                                <option value="">-- Tỉnh Thành Phố --</option>
+                                {% for tinh in ds_tinh %}
+                                <option name=" tinh_tp" value="{{ tinh.id }}" >{{ tinh.ten }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <label for="quan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quân Huyện </label>
+                            <select class="w-full" id="quan" name = "quan_huyen">
+                                <option value="">-- Chọn quận/huyện --  </option>
+                            </select>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <label for="xa" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Xã Phường </label>
+                            <select class="w-full" id="xa" name = "xa_phuong">
+                                    <option value="">-- Chọn xã/phường --</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
                         <label for="homestay_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">địa chỉ </label>
                         {{form.homestay_address}}
@@ -34,9 +72,62 @@
                         {{form.decription}}
                     </div>
                     <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
+                        <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" name="images" multiple>
+                        <!-- <input type="file" name="images" multiple> -->
+                    </div>
+                    <div>
                         <br>
                         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
+
+
+    <!-- script này để khi chọn tỉnh thì sẽ chỉ fetch ra các huyện liên quan và xa liên quan  -->
+    <script>
+        document.getElementById("tinh").addEventListener("change", function() {
+            var tinhID = this.value;
+            var quanSelect = document.getElementById("quan");
+            quanSelect.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+            document.getElementById("xa").innerHTML = '<option value="">-- Chọn xã/phường --</option>'; // Reset Xã
+    
+            if (tinhID) {
+                fetch(`/api/quan-huyen/?tinh_id=${tinhID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(quan => {
+                            var option = document.createElement("option");
+                            option.value = quan.id;
+                            option.textContent = quan.ten;
+                            quanSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Lỗi khi gọi API:", error));
+            }
+        });
+    
+        document.getElementById("quan").addEventListener("change", function() {
+            var quanID = this.value;
+            var xaSelect = document.getElementById("xa");
+            xaSelect.innerHTML = '<option value="">-- Chọn xã/phường --</option>';
+    
+            if (quanID) {
+                fetch(`/api/xa-phuong/?quan_id=${quanID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(xa => {
+                            var option = document.createElement("option");
+                            option.value = xa.id;
+                            option.textContent = xa.ten;
+                            xaSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Lỗi khi gọi API:", error));
+            }
+        });
+    </script>
+
 {% endblock %}

@@ -10,25 +10,23 @@ class TinhTP(models.Model):
 class QuanHuyen(models.Model):
     ten = models.CharField(max_length= 100)
     tinh_tp = models.ForeignKey(TinhTP, on_delete= models.CASCADE, related_name="quan_huyen")
-
-
     def __str__(self):
-        return f"{self.ten} {self.tinh_tp}"
+        return self.ten
     
 class XaPhuong(models.Model):
     ten = models.CharField(max_length=100)
     quan_huyen = models.ForeignKey(QuanHuyen, on_delete=models.CASCADE, related_name="xa_phuong")
-
-
     def __str__(self):
-        return f"{self.ten} - {self.quan_huyen.ten} - {self.quan_huyen.tinh_tp.ten}"
-
+        return self.ten
 
 
 class Homestay(models.Model):
     # owner = models.IntegerField(blank= False, default= 1)
-    owner = models.ForeignKey(User, on_delete= models.CASCADE, blank= False, default= 1)
+    owner = models.ForeignKey(User, on_delete= models.CASCADE, blank= False)
     homestay_name = models.CharField(max_length=255)
+    tinh_tp = models.ForeignKey(TinhTP, on_delete=models.CASCADE, blank= False)
+    quan_huyen = models.ForeignKey(QuanHuyen, on_delete=models.CASCADE, blank= False)
+    xa_phuong = models.ForeignKey(XaPhuong, on_delete= models.CASCADE, blank= False)
     homestay_address = models.CharField(max_length=500)
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
     total_rooms = models.IntegerField(default=1)
@@ -41,6 +39,8 @@ class Homestay(models.Model):
 class HomestayImage(models.Model):
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to="homestays/")
+    def __str__(self):
+        return f"Ảnh của {self.homestay.homestay_name}"
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
