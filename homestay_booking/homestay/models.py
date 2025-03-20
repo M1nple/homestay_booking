@@ -21,7 +21,6 @@ class XaPhuong(models.Model):
 
 
 class Homestay(models.Model):
-    # owner = models.IntegerField(blank= False, default= 1)
     owner = models.ForeignKey(User, on_delete= models.CASCADE, blank= False)
     homestay_name = models.CharField(max_length=255)
     tinh_tp = models.ForeignKey(TinhTP, on_delete=models.CASCADE, blank= False)

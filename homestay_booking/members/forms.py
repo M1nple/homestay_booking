@@ -8,11 +8,11 @@ class RegisterUserForm(UserCreationForm):
     first_name = forms.CharField(max_length = 20, widget = forms.TextInput(attrs={'class': 'form-control'})) 
     last_name = forms.CharField(max_length = 20, )
     phoneNumber = forms.CharField(max_length= 10)
-    # avatar = forms.ImageField()
+
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'phoneNumber',)
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'phoneNumber')
 
 # các trường có sẵn thì phải gọi như này class = 'form-control' boostrap 
     # def __init__(self, *args, **kwargs):

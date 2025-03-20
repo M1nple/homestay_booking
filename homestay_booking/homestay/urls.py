@@ -16,13 +16,11 @@ urlpatterns = [
 
     # Delete
     path('delete_img/<int:id> ', views.deleteImage, name= 'delete-image'),
+    path('delete_homestay/<int:id>', views.deleteHomestay, name = 'delete-homestay'),
+    
 
 
     #API
     path("api/quan-huyen/", get_quan_huyen, name="api_quan_huyen"),
     path("api/xa-phuong/", get_xa_phuong, name="api_xa_phuong"),
-    path("form/", form_view, name="form"),
-
-
-
 ]

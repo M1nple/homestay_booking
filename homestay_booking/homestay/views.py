@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse # api
@@ -39,19 +40,16 @@ def create_homestay(request):
         form = FormHomestay(request.POST) 
         files = request.FILES.getlist("images") #vì nó ở 1 model riêng nên kh thêm được vào form nên sẽ tạo input ở trang html và đặt name cho nó r gọi vào 
         if form.is_valid():
-            
-            # lấy dữ liêu qua name từ template sang
-            tinh = form.cleaned_data['tinh_tp']
-            huyen = form.cleaned_data['quan_huyen']
-            xa = form.cleaned_data['xa_phuong']
-
-            # chưa lưu vào db luôn 
             homestay = form.save(commit=False)
 
-            # gán các biến vào db 
-            homestay.tinh_tp = tinh
-            homestay.quan_huyen = huyen
-            homestay.xa_phuong = xa
+            quan_huyen = form.cleaned_data.get("quan_huyen")
+            xa_phuong = form.cleaned_data.get("xa_phuong")
+            if not quan_huyen or not xa_phuong:
+                messages.error(request,("chọn quận huyên / phường xã "))
+                return redirect("create-homestay")
+                # return render(request, 'create/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
+            
+            # chưa lưu vào db luôn 
             homestay.owner = request.user
             
             # sau đó mới lưu
@@ -69,39 +67,50 @@ def create_homestay(request):
     return render(request, 'create/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
 
 #UPDATE
-
-
 @login_required(login_url='login')
 def update_homestay(request, id):
     homestay = get_object_or_404(Homestay, pk=id)
+    ds_tinh = TinhTP.objects.all()  # Chỉ load danh sách Tỉnh/Thành phố
 
+    # Nếu người dùng không phải chủ của homestay, chuyển hướng về trang chủ
     if request.user != homestay.owner:
-        return redirect("home")  # ✅ Nếu không phải chủ homestay, quay về trang chính
+        return redirect("home")
  
     if request.method == "POST":
         form = FormHomestay(request.POST, instance=homestay)
-        ds_tinh = TinhTP.objects.all()  # Chỉ load danh sách Tỉnh/Thành phố
-        files = request.FILES.getlist("images")  # ✅ Lấy danh sách ảnh mới
+        files = request.FILES.getlist("images")  # Lấy danh sách ảnh mới
 
-        if form.is_valid():
-            form.save()  # ✅ Cập nhật thông tin homestay
+        if form.is_valid():# Lấy dữ liệu đã xác thực từ form
+            form.save(commit=False)
 
-            # ✅ Xóa ảnh cũ nếu cần
-            if "delete_images" in request.POST:  # Nếu người dùng chọn xóa ảnh
+            quan_huyen = form.cleaned_data.get("quan_huyen")
+            xa_phuong = form.cleaned_data.get("xa_phuong")
+            if not quan_huyen or not xa_phuong: # đảm bảo 2 trường này kh null
+                messages.error(request,("chọn quận huyên / phường xã "))
+                return redirect('update-homestay', id = id )
+                # return render(request, 'create/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
+            
+            form.save()
+
+            # Xóa ảnh cũ nếu người dùng chọn xóa ảnh
+            if "delete_images" in request.POST:
                 HomestayImage.objects.filter(homestay=homestay).delete()
 
-            # ✅ Thêm ảnh mới vào bảng HomestayImage
+            # Thêm ảnh mới
             for file in files:
                 HomestayImage.objects.create(homestay=homestay, image=file)
 
-            return redirect("list-homestay")  # ✅ Chuyển hướng sau khi cập nhật thành công
-
+            return redirect("list-homestay")  # Chuyển hướng sau khi cập nhật thành công
     else:
         form = FormHomestay(instance=homestay)
 
-    images = HomestayImage.objects.filter(homestay=homestay)  # ✅ Lấy tất cả ảnh của homestay
+    images = HomestayImage.objects.filter(homestay=homestay)  # Lấy tất cả ảnh của homestay
 
-    return render(request, "update/update_homestay.html", {"form": form, "images": images, "ds_tinh": ds_tinh})
+    return render(request, "update/update_homestay.html", {
+        "form": form, 
+        "images": images, 
+        "ds_tinh": ds_tinh
+    })
 
 
 #DELETE
@@ -117,6 +126,21 @@ def deleteImage(request, id):
     else:
         messages.error(request, ('lôix '))
     return redirect("update-homestay", id=homestay.id)
+
+
+
+@login_required(login_url='login')
+def deleteHomestay(request, id):
+    me = request.user
+    # homestay = Homestay.objects.get(pk = id) # nếu k có id = pk sẽ báo nối does not exit 
+    homestay = get_object_or_404(Homestay, pk=id) # dùng cái này thay get khi kh có id = pk sẽ báo lỗi 404 
+    if request.user == homestay.owner:
+        homestay.delete()
+        messages.success(request, "Xóa thành công")
+    else:
+        # messages.error(request, "bạn kh thể xóa")
+        raise PermissionDenied("Bạn không có quyền xóa homestay này!") # dùng cái này đê bảo về API nâng cao từ chối quyền 
+    return redirect("list-homestay")
 
 
 
@@ -137,7 +161,3 @@ def get_xa_phuong(request):
     return JsonResponse([])
 
 
-
-def form_view(request):
-    ds_tinh = TinhTP.objects.all()  # Chỉ load danh sách Tỉnh/Thành phố
-    return render(request, "views/form.html", {"ds_tinh": ds_tinh})

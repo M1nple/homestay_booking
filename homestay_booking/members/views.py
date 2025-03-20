@@ -10,16 +10,19 @@ from .forms import *
 
 # Register
 def register(request):
+    if request.user.is_authenticated:
+        return redirect("home")  
     if request.method == "POST":
         form = RegisterUserForm(request.POST)
         if form.is_valid():
 # Lưu user trước
             use = form.save()
-            use = form.save()
 # Tạo UserProfile
             UserProfile.objects.create(
                 user = use,
-                phoneNumber = form.cleaned_data['phoneNumber'])
+                phoneNumber = form.cleaned_data['phoneNumber'],
+                # avatar = form.cleaned_data['avatar']
+                )
 # Xác thực user sau khi đăng ký
             username = form.cleaned_data['username'] 
             password = form.cleaned_data['password1']
@@ -42,6 +45,9 @@ def register(request):
 
 # Login
 def login_user(request):
+    if request.user.is_authenticated:
+        return redirect("home")  
+
     if request.method == "POST":
         username = request.POST['username'] 
         password = request.POST['password']

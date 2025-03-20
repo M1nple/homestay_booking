@@ -23,21 +23,33 @@
                         {{form.price_per_night}}    
                     </div>
                 </div>
-                <div class="mb-6">
-
+                <div class="grid gap-2 mb-6 md:grid-cols-3" >
                     <div>
-                        <label for="tinh_tp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tỉnh Tp</label>
+                        <label for="tinh" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tỉnh Tp</label>
+                        <!-- <select class="w-full" id="tinh" name = "tinh_tp">
+                            <option value="{{ homestay.tinh_tp }}">{{ homestay.tinh }}</option>
+                            {% for tinh in ds_tinh %}
+                            <option name=" tinh_tp" value="{{ tinh.id }}" >{{ tinh.ten }}</option>
+                            {% endfor %}
+                        </select> -->
                         {{form.tinh_tp}}
                     </div>
                     <div>
-                        <label for="quan_huyen" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quân Huyện </label>
+                        <label for="quan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quân Huyện </label>
+                        <!-- <select class="w-full" id="quan" name = "quan_huyen">
+                            <option value="">-- Chọn quận/huyện --  </option>
+                        </select> -->
                         {{form.quan_huyen}}
                     </div>
                     <div>
-                        <label for="xa_phuong" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Xã Phường </label>
+                        <label for="xa" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Xã Phường </label>
+                        <!-- <select class="w-full" id="xa" name = "xa_phuong">
+                                <option value="">-- Chọn xã/phường --</option>
+                        </select> -->
                         {{form.xa_phuong}}
                     </div>
-
+                </div>
+                <div class="mb-6">
                     <div>
                         <label for="homestay_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">địa chỉ </label>
                         {{form.homestay_address}}
@@ -88,13 +100,51 @@
                      @click="open = false">
                     <img :src="imageSrc" alt="Zoomed Image" class="max-w-3xl rounded-lg">
                 </div>
-            </div>
-            
-
-
-
-
-
+            </div>            
         </div>
     </div>
+
+    <!-- script này để khi chọn tỉnh thì sẽ chỉ fetch ra các huyện liên quan và xa liên quan  -->
+    <script>
+        document.getElementById("tinh").addEventListener("change", function() {
+            var tinhID = this.value;
+            var quanSelect = document.getElementById("quan");
+            quanSelect.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+            document.getElementById("xa").innerHTML = '<option value="">-- Chọn xã/phường --</option>'; // Reset Xã
+    
+            if (tinhID) {
+                fetch(`/api/quan-huyen/?tinh_id=${tinhID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(quan => {
+                            var option = document.createElement("option");
+                            option.value = quan.id;
+                            option.textContent = quan.ten;
+                            quanSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Lỗi khi gọi API:", error));
+            }
+        });
+    
+        document.getElementById("quan").addEventListener("change", function() {
+            var quanID = this.value;
+            var xaSelect = document.getElementById("xa");
+            xaSelect.innerHTML = '<option value="">-- Chọn xã/phường --</option>';
+    
+            if (quanID) {
+                fetch(`/api/xa-phuong/?quan_id=${quanID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(xa => {
+                            var option = document.createElement("option");
+                            option.value = xa.id;
+                            option.textContent = xa.ten;
+                            xaSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Lỗi khi gọi API:", error));
+            }
+        });
+    </script>
 {% endblock %} 
