@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import JsonResponse # api
 from django.contrib import messages
@@ -12,10 +13,14 @@ from .models import *
 
 
 
+
+
 #VIEWS
 def home(request):
     homestays = Homestay.objects.all()
-    return render(request, 'home.html', {'homestays': homestays})
+    for homestay in homestays:
+        homestay.thumbnail = homestay.images.first()
+    return render(request, 'homestays/home.html', {'homestays': homestays})
 
 @login_required(login_url='login')
 def list_homestay(request):
@@ -23,13 +28,14 @@ def list_homestay(request):
     homestays = Homestay.objects.filter(owner = me).prefetch_related("images") 
     for homestay in homestays:
         homestay.thumbnail = homestay.images.first()
-    return render(request, 'views/list_homestay.html',{'homestays': homestays})
+    return render(request, 'homestays/list_homestay.html',{'homestays': homestays})
 
 @login_required(login_url='login')
 def show_homestay(request, id ):
-    homestay = Homestay.objects.filter(id = id )
+    homestays = Homestay.objects.filter(id = id )
     images = HomestayImage.objects.filter(homestay = id)
-    return render(request, 'views/show_homestay.html', {'homestays': homestay, 'images': images})
+
+    return render(request, 'homestays/show_homestay.html', {'homestays': homestays, 'images': images})
 
 
 #CREATE
@@ -47,7 +53,7 @@ def create_homestay(request):
             if not quan_huyen or not xa_phuong:
                 messages.error(request,("chọn quận huyên / phường xã "))
                 return redirect("create-homestay")
-                # return render(request, 'create/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
+                # return render(request, 'homestays/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
             
             # chưa lưu vào db luôn 
             homestay.owner = request.user
@@ -64,7 +70,7 @@ def create_homestay(request):
                 messages.error(request, f"{field}: {error}")
     else:
         form = FormHomestay()
-    return render(request, 'create/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
+    return render(request, 'homestays/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
 
 #UPDATE
 @login_required(login_url='login')
@@ -88,7 +94,7 @@ def update_homestay(request, id):
             if not quan_huyen or not xa_phuong: # đảm bảo 2 trường này kh null
                 messages.error(request,("chọn quận huyên / phường xã "))
                 return redirect('update-homestay', id = id )
-                # return render(request, 'create/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
+                # return render(request, 'homestays/create_homestay.html', {'form': form, "ds_tinh": ds_tinh})
             
             form.save()
 
@@ -106,7 +112,7 @@ def update_homestay(request, id):
 
     images = HomestayImage.objects.filter(homestay=homestay)  # Lấy tất cả ảnh của homestay
 
-    return render(request, "update/update_homestay.html", {
+    return render(request, "homestays/update_homestay.html", {
         "form": form, 
         "images": images, 
         "ds_tinh": ds_tinh
@@ -129,18 +135,44 @@ def deleteImage(request, id):
 
 
 
+# @login_required(login_url='login')
+# def deleteHomestay(request, id):
+#     me = request.user
+#     # homestay = Homestay.objects.get(pk = id) # nếu k có id = pk sẽ báo nối does not exit 
+#     homestay = get_object_or_404(Homestay, pk=id) # dùng cái này thay get khi kh có id = pk sẽ báo lỗi 404 
+#     if request.user == homestay.owner:
+#         homestay.delete()
+#         messages.success(request, "Xóa thành công")
+#     else:
+#         # messages.error(request, "bạn kh thể xóa")
+#         raise PermissionDenied("Bạn không có quyền xóa homestay này!") # dùng cái này đê bảo về API nâng cao từ chối quyền 
+#     return redirect("list-homestay")
+
+
+
+
+
 @login_required(login_url='login')
 def deleteHomestay(request, id):
-    me = request.user
-    # homestay = Homestay.objects.get(pk = id) # nếu k có id = pk sẽ báo nối does not exit 
-    homestay = get_object_or_404(Homestay, pk=id) # dùng cái này thay get khi kh có id = pk sẽ báo lỗi 404 
-    if request.user == homestay.owner:
-        homestay.delete()
-        messages.success(request, "Xóa thành công")
-    else:
-        # messages.error(request, "bạn kh thể xóa")
-        raise PermissionDenied("Bạn không có quyền xóa homestay này!") # dùng cái này đê bảo về API nâng cao từ chối quyền 
-    return redirect("list-homestay")
+    homestay = get_object_or_404(Homestay, pk=id)
+
+    if request.user != homestay.owner:
+        messages.error(request, "Bạn không có quyền xóa homestay này!")
+        return redirect("list-homestay")
+
+    if request.method == "POST":
+        password = request.POST.get("password")  # ✅ Lấy mật khẩu từ form
+
+        user = authenticate(request, username=request.user.username, password=password)
+        if user:  # ✅ Nếu mật khẩu đúng, thực hiện xóa
+            homestay.delete()
+            messages.success(request, "Xóa thành công")
+            return redirect("list-homestay")
+        else:  # ❌ Nếu sai mật khẩu, báo lỗi
+            messages.error(request, "Mật khẩu không đúng!")
+
+    return render(request, "homestays/confirm_delete_homestay.html", {"homestay": homestay})
+
 
 
 

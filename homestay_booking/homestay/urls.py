@@ -6,7 +6,7 @@ urlpatterns = [
     # views
     path('', views.home, name= 'home'),
     path('list_homestay', views.list_homestay, name= 'list-homestay'),
-    path('show_homestay <int:id>', views.show_homestay, name= 'show-homestay'),
+    path('show_homestay/<int:id>', views.show_homestay, name= 'show-homestay'),
 
     # create
     path('create_homestay', views.create_homestay, name= 'create-homestay'),

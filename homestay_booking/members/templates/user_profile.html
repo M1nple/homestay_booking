@@ -80,32 +80,34 @@
     <!--  -->
     <div class="p-4 sm:ml-64">
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-            <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700  flex justify-between items-center">
+            <div class="block max-w p-6 bg-white border border-gray-200 rounded-lg shadow-sm  dark:bg-gray-800 dark:border-gray-700   ">
                 <!-- Ảnh user -->
-                <div class="w-2/8 mx-1">
-                    {% if user_profile.avatar %}
-                        <img class="w-20 h-20 rounded-full" src="{{user_profile.avatar.url }}" alt="Avatar">
-                    {% endif %}
+                <div class="flex items-center">
+                    <div class="w-32 h-32 mx-9">  <!-- Tăng kích thước -->
+                            <img class="w-32 h-32 rounded-full object-cover border-4 border-gray-300 shadow-lg" src="{{ user_profile.avatar.url }}" alt="Avatar">
+                    </div>
+                
+                    <!-- Thông tin user -->
+                    <div class="mx-9">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </h5>
+                        <p class="font-normal text-gray-700 dark:text-gray-400">{{ user.email }}</p>
+                        <p class="font-normal text-gray-700 dark:text-gray-400">{{ user_profile.phoneNumber }}</p>
+                    </div>
                 </div>
-    
-                <!-- Thông tin user -->
-                <div class="w-4/6 mx-8">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        {{ user.first_name }} {{ user.last_name }}
-                    </h5>
-                    <p class="font-normal text-gray-700 dark:text-gray-400">{{ user.email }}</p>
-
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                
                         
-                    </h5>
+                <div class=" text-center ">
+                    <hr class="max-w h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-10 dark:bg-gray-700">
+                    <!-- Nút Edit bên phải -->
+                     <div class="flex justify-start ">
+                        <a href="#" class="ml-9 px-9 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+                            Edit
+                        </a>
+                    </div>
                 </div>
-    
-                <!-- Nút Edit bên phải -->
-                <div class="w-1/6 text-center">
-                    <a href="#" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
-                        Edit
-                    </a>
-                </div>
+
             </div>
         </div>
     </div>
