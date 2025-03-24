@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'rest_framework', # thêm thư viện DRF
     'homestay',
     'members',
-    'Minh',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,9 +83,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'homestay_booking',
         'USER': 'postgres',
-        'PASSWORD': '652003',
+        'PASSWORD':'652003',
         'HOST': '127.0.0.1',
-        'POST': '5432',
+        'PORT': '5432',
     }
 }
 
