@@ -7,5 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('homestay.urls')),
     path('members/', include('members.urls')),
-
+    path('minh/', include('Minh.urls')),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

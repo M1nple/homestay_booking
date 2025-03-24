@@ -6,12 +6,11 @@
     <header class="py-6 text-center">
         <h1 class="text-3xl font-bold text-gray-900">Danh sách Homestay</h1>
     </header>
-    <!-- <div class="w-full max-w-3xl"> -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">        
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">        
             {% for homestay in homestays %}
                 <a href="{% url 'show-homestay' homestay.id  %}" class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
                     {% if homestay.thumbnail %}
-                        <img src="{{ homestay.thumbnail.image.url }}" class="w-full h-[200px] object-cover rounded-t-lg" alt="Ảnh Homestay">
+                        <img src="{{ homestay.thumbnail.image.url }}" class="w-full h-[180px] object-cover rounded-t-lg" alt="Ảnh Homestay">
                     {% endif %}
                     <div class="p-5">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{homestay.homestay_name}}</h5>
@@ -24,6 +23,5 @@
                 </a>
             {% endfor %}
         </section>
-    <!-- </div> -->
     <footer></footer>
 {% endblock %} 

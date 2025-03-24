@@ -32,9 +32,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
+    'rest_framework', # thêm thư viện DRF
     'homestay',
     'members',
+    'Minh',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
